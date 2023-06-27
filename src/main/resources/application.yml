@@ -3,4 +3,12 @@ server:
   port: 80
   servlet:
     context-path: /
+    
+    
+bybit:
+  account:
+    credentials:
+      accessKey: LGPINISDZRMULCFELE
+      secretKey: LVRWFWUXKUKRGIXPZZCGOCSUFRIADYLRKXOE
+      
    
