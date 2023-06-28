@@ -39,8 +39,9 @@ public class TradingviewApiController {
 	
 	final static String API_KEY = "LGPINISDZRMULCFELE";
     final static String API_SECRET = "LVRWFWUXKUKRGIXPZZCGOCSUFRIADYLRKXOE";
-    final static String TIMESTAMP = Long.toString(ZonedDateTime.now().toInstant().toEpochMilli());
-    final static String RECV_WINDOW = "5000";
+    //final static String TIMESTAMP = Long.toString(ZonedDateTime.now().toInstant().toEpochMilli());
+    final static String TIMESTAMP = Long.toString(new java.sql.Timestamp(System.currentTimeMillis()).getTime());
+    final static String RECV_WINDOW = "50000";
 	
 	
 	@RequestMapping("/tradingview-alerts")
@@ -52,11 +53,10 @@ public class TradingviewApiController {
 		System.out.println("hi~~~~");
         System.out.println(alertData);
         
-        
+        //?accountType=CONTRACT&coin=USDT
         Map<String, Object> map = new HashMap<>();
-        map.put("category","linear");
-        map.put("symbol", "BTCUSDT");
-        map.put("settleCoin", "USDT");
+        map.put("accountType", "CONTRACT");
+        map.put("coin", "USDT");
 
         String signature = genGetSign(map);
         StringBuilder sb = genQueryStr(map);        
@@ -64,7 +64,7 @@ public class TradingviewApiController {
         
         OkHttpClient client = new OkHttpClient().newBuilder().build();
         Request request = new Request.Builder()
-                .url("https://api.bybit.com/v5/account/wallet-balance")
+                .url("https://api.bybit.com/v5/account/wallet-balance?" + sb)
                 .get()
                 .addHeader("X-BAPI-API-KEY", API_KEY)
                 .addHeader("X-BAPI-SIGN", signature)
@@ -75,8 +75,10 @@ public class TradingviewApiController {
         Call call = client.newCall(request);
         try {
             Response response = call.execute();
+            System.out.println("response:"+response);
             assert response.body() != null;
-            System.out.println(response.body().string());
+            System.out.println("~~~");
+            System.out.println("!!!!!!!!!"+response.body().string());
         }catch (IOException e){
             e.printStackTrace();
         }
@@ -135,6 +137,7 @@ public class TradingviewApiController {
                     .append("&");
         }
         sb.deleteCharAt(sb.length() - 1);
+        System.out.println("sb==============="+sb);
         return sb;
     }
 	
